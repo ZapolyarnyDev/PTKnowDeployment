@@ -1,0 +1,57 @@
+﻿name: ptknow
+
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: ${BACKEND_IMAGE}:${BACKEND_TAG}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      PTKNOW_PORT: ${PTKNOW_PORT}
+      PTKNOW_DATASOURCE_ADDRESS: ${PTKNOW_DATASOURCE_ADDRESS}
+      PTKNOW_DATASOURCE_NAME: ${PTKNOW_DATASOURCE_NAME}
+      PTKNOW_DATASOURCE_USERNAME: ${PTKNOW_DATASOURCE_USERNAME}
+      PTKNOW_DATASOURCE_PASSWORD: ${PTKNOW_DATASOURCE_PASSWORD}
+      JWT_ISSUER: ${JWT_ISSUER}
+      SECRET_JWT_KEY: ${SECRET_JWT_KEY}
+      JWT_REFRESH_COOKIE_SECURE: ${JWT_REFRESH_COOKIE_SECURE}
+      JWT_REFRESH_COOKIE_SAME_SITE: ${JWT_REFRESH_COOKIE_SAME_SITE}
+      APP_FILE_UPLOAD_DIR: ${APP_FILE_UPLOAD_DIR}
+      SECURITY_RATE_LIMIT_ENABLED: ${SECURITY_RATE_LIMIT_ENABLED}
+      SECURITY_RATE_LIMIT_LOGIN_MAX: ${SECURITY_RATE_LIMIT_LOGIN_MAX}
+      SECURITY_RATE_LIMIT_LOGIN_WINDOW: ${SECURITY_RATE_LIMIT_LOGIN_WINDOW}
+      SECURITY_RATE_LIMIT_REGISTER_MAX: ${SECURITY_RATE_LIMIT_REGISTER_MAX}
+      SECURITY_RATE_LIMIT_REGISTER_WINDOW: ${SECURITY_RATE_LIMIT_REGISTER_WINDOW}
+      SECURITY_RATE_LIMIT_REFRESH_MAX: ${SECURITY_RATE_LIMIT_REFRESH_MAX}
+      SECURITY_RATE_LIMIT_REFRESH_WINDOW: ${SECURITY_RATE_LIMIT_REFRESH_WINDOW}
+      JAVA_OPTS: ${JAVA_OPTS}
+    ports:
+      - "${APP_PORT}:${PTKNOW_PORT}"
+    volumes:
+      - backend-uploads:${APP_FILE_UPLOAD_DIR}
+
+volumes:
+  postgres-data:
+  backend-uploads:
