@@ -1,36 +1,36 @@
 ﻿# PTKnow Deploy
 
-Репозиторий для развёртывания и общей документации проекта PTKnow.
+Репозиторий предназначен для развёртывания проекта и хранения общей документации по его запуску
 
-## Что находится в репозитории
+## 📦 Что находится в репозитории
 
-- `compose.yaml` — базовый шаблон развёртывания backend и PostgreSQL
-- `compose.dev.yaml` — локальное dev-расширение с MinIO для S3-compatible режима
+- `compose.yaml` — базовый файл для запуска серверной части и PostgreSQL
+- `compose.dev.yaml` — локальное расширение для разработки с MinIO
 - `.env.example` — шаблон переменных окружения
 
-## Базовый запуск
+## 🚀 Базовый запуск
 
 1. Создать `.env` на основе `.env.example`.
 2. Заполнить секреты и параметры окружения.
-3. Запустить:
+3. Запустить сервисы:
 
 ```bash
 docker compose up -d
 ```
 
-4. Проверить логи backend:
+4. Проверить логи серверной части:
 
 ```bash
 docker compose logs -f backend
 ```
 
-Что поднимается:
+В базовом режиме поднимаются:
 - `postgres`
 - `backend`
 
-## Локальный dev-режим с MinIO
+## 🧪 Локальный режим разработки с MinIO
 
-Если нужно протестировать S3-compatible хранилище локально, использовать оба файла Compose:
+Если нужно проверить работу с S3-совместимым хранилищем локально, следует использовать оба файла Compose:
 
 ```bash
 docker compose -f compose.yaml -f compose.dev.yaml up -d
@@ -40,14 +40,14 @@ docker compose -f compose.yaml -f compose.dev.yaml up -d
 - `minio`
 - `minio-init`
 
-`minio-init` автоматически создаёт bucket, указанный в `APP_FILE_S3_BUCKET`.
+`minio-init` автоматически создаёт бакет, указанный в `APP_FILE_S3_BUCKET`.
 
-Основные адреса dev-режима:
+Основные адреса:
 - backend: `http://localhost:8095`
 - MinIO API: `http://localhost:9000`
 - MinIO Console: `http://localhost:9001`
 
-## Полезные команды
+## 🛠️ Полезные команды
 
 Базовый запуск:
 
@@ -55,7 +55,7 @@ docker compose -f compose.yaml -f compose.dev.yaml up -d
 docker compose up -d
 ```
 
-Dev-режим с MinIO:
+Запуск с MinIO:
 
 ```bash
 docker compose -f compose.yaml -f compose.dev.yaml up -d
@@ -67,7 +67,7 @@ docker compose -f compose.yaml -f compose.dev.yaml up -d
 docker compose down
 ```
 
-Остановка dev-режима:
+Остановка режима с MinIO:
 
 ```bash
 docker compose -f compose.yaml -f compose.dev.yaml down
@@ -79,19 +79,19 @@ docker compose -f compose.yaml -f compose.dev.yaml down
 docker compose -f compose.yaml -f compose.dev.yaml down -v
 ```
 
-Логи backend:
+Логи на бэкенде:
 
 ```bash
 docker compose logs -f backend
 ```
 
-Логи MinIO в dev-режиме:
+Логи MinIO:
 
 ```bash
 docker compose -f compose.yaml -f compose.dev.yaml logs -f minio
 ```
 
-## Примечание
+## 📎 Примечание
 
-Базовый `compose.yaml` не привязан к локальному MinIO и подходит как более нейтральный deploy-шаблон.
-Локальный S3-compatible сценарий вынесен в `compose.dev.yaml`.
+Базовый `compose.yaml` не зависит от локального MinIO и подходит как нейтральный шаблон для развёртывания.
+Сценарий локальной проверки S3-совместимого хранилища вынесен в `compose.dev.yaml`
