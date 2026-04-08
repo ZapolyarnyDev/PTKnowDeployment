@@ -4,7 +4,7 @@
 
 ## 📦 Что находится в репозитории
 
-- `compose.yaml` — базовый файл для запуска серверной части и PostgreSQL
+- `compose.yaml` — базовый файл для запуска frontend, backend и PostgreSQL
 - `compose.dev.yaml` — локальное расширение для разработки с MinIO
 - `.env.example` — шаблон переменных окружения
 
@@ -25,6 +25,7 @@ docker compose logs -f backend
 ```
 
 В базовом режиме поднимаются:
+- `frontend`
 - `postgres`
 - `backend`
 
@@ -43,7 +44,7 @@ docker compose -f compose.yaml -f compose.dev.yaml up -d
 `minio-init` автоматически создаёт бакет, указанный в `APP_FILE_S3_BUCKET`.
 
 Основные адреса:
-- backend: `http://localhost:8095`
+- frontend: `http://localhost`
 - MinIO API: `http://localhost:9000`
 - MinIO Console: `http://localhost:9001`
 
@@ -85,6 +86,12 @@ docker compose -f compose.yaml -f compose.dev.yaml down -v
 docker compose logs -f backend
 ```
 
+Логи на фронтенде:
+
+```bash
+docker compose logs -f frontend
+```
+
 Логи MinIO:
 
 ```bash
@@ -93,5 +100,7 @@ docker compose -f compose.yaml -f compose.dev.yaml logs -f minio
 
 ## 📎 Примечание
 
+Базовый `compose.yaml` публикует наружу только `frontend`.
+`backend` доступен только внутри docker-сети и должен вызываться через `/api` на фронтовом `nginx`
 Базовый `compose.yaml` не зависит от локального MinIO и подходит как нейтральный шаблон для развёртывания.
 Сценарий локальной проверки S3-совместимого хранилища вынесен в `compose.dev.yaml`
